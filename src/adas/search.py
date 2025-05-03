@@ -26,6 +26,12 @@ client = openai.AzureOpenAI(
     api_version=os.getenv("AZURE_API_VERSION"),
 )
 
+# You want to use the local fastapi server
+# client = openai.OpenAI(
+#     base_url="http://localhost:8000/v1",  # note the /v1 suffix
+#     default_headers={"X-Proxy-Key": os.getenv("LOCAL_FAST_API_KEY")},
+# )
+
 if os.getenv("DEBUG_API", None) is not None:
     models = [os.getenv("AZURE_META_AGENT_MODEL"), os.getenv("AZURE_AGENT_MODEL")]
     for model in models:

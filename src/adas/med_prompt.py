@@ -6,7 +6,7 @@ EXAMPLE = {
     "code": """def forward(self, taskInfo):
     # Your code here
     return answer
-"""
+""",
 }
 
 COT = {
@@ -30,12 +30,13 @@ COT = {
 
     # Return only the final answer
     return answer
-"""
+""",
 }
 
-COT_SC = {"thought": "While an LLM can arrive at the correct answer, its reasoning may vary. By repeatedly asking the same question with high temperature settings, we can generate different reasoning paths. We then combine multiple answers from these Chain-of-Thought (CoT) agents to produce a more accurate final answer through ensembling.",
-          "name": "Self-Consistency with Chain-of-Thought",
-          "code": """def forward(self, taskInfo):
+COT_SC = {
+    "thought": "While an LLM can arrive at the correct answer, its reasoning may vary. By repeatedly asking the same question with high temperature settings, we can generate different reasoning paths. We then combine multiple answers from these Chain-of-Thought (CoT) agents to produce a more accurate final answer through ensembling.",
+    "name": "Self-Consistency with Chain-of-Thought",
+    "code": """def forward(self, taskInfo):
     # Instruction for step-by-step reasoning
     cot_instruction = "Please think step by step and then solve the task."
     N = 5 # Number of CoT agents
@@ -56,8 +57,8 @@ COT_SC = {"thought": "While an LLM can arrive at the correct answer, its reasoni
     # Ensembling the answers from multiple CoT agents
     answer = majority_voting(possible_answers)
     return answer  
-"""
-          }
+""",
+}
 
 Reflexion = {
     "thought": "To enhance its performance, an LLM can iteratively improve its answer based on feedback. By reflecting on its previous attempts and incorporating feedback, the model can refine its reasoning and provide a more accurate solution.",
@@ -92,7 +93,7 @@ Reflexion = {
         # Reflect on previous attempts and refine the answer
         thinking, answer = cot_agent(cot_inputs, cot_reflect_instruction, i + 1)
     return answer
-"""
+""",
 }
 
 LLM_debate = {
@@ -130,12 +131,13 @@ LLM_debate = {
     # Make the final decision based on all debate results and solutions
     thinking, answer = final_decision_agent([taskInfo] + all_thinking[max_round-1] + all_answer[max_round-1], final_decision_instruction)
     return answer
-"""
+""",
 }
 
-Take_a_step_back = {"thought": "Let LLM first think about the principles involved in solving this task which could be helpful. By understanding the underlying principles, the model can better reason through the problem and provide a more accurate solution.",
-                    "name": "Step-back Abstraction",
-                    "code": """def forward(self, taskInfo):
+Take_a_step_back = {
+    "thought": "Let LLM first think about the principles involved in solving this task which could be helpful. By understanding the underlying principles, the model can better reason through the problem and provide a more accurate solution.",
+    "name": "Step-back Abstraction",
+    "code": """def forward(self, taskInfo):
         # Instruction for understanding the principles involved in the task
         principle_instruction = "What are the physics, chemistry or biology principles and concepts involved in solving this task? First think step by step. Then list all involved principles and explain them."
         
@@ -152,12 +154,13 @@ Take_a_step_back = {"thought": "Let LLM first think about the principles involve
         # Use the principles to solve the task
         thinking, answer = cot_agent([taskInfo, thinking, principle], cot_instruction)
         return answer
-"""
-                    }
+""",
+}
 
-QD = {"thought": "Similar to Quality-Diversity methods, let LLM generate multiple diverse interesting solutions could help. By encouraging the model to explore different reasoning paths, we can increase the chances of finding the best solution.",
-      "name": "Quality-Diversity",
-      "code": """def forward(self, taskInfo):
+QD = {
+    "thought": "Similar to Quality-Diversity methods, let LLM generate multiple diverse interesting solutions could help. By encouraging the model to explore different reasoning paths, we can increase the chances of finding the best solution.",
+    "name": "Quality-Diversity",
+    "code": """def forward(self, taskInfo):
     # Instruction for initial reasoning
     cot_initial_instruction = "Please think step by step and then solve the task."
 
@@ -190,12 +193,13 @@ QD = {"thought": "Similar to Quality-Diversity methods, let LLM generate multipl
     # Make the final decision based on all generated answers
     thinking, answer = final_decision_agent([taskInfo] + possible_answers, final_decision_instruction)
     return answer
-"""
-      }
+""",
+}
 
-Role_Assignment = {"thought": "Similar to Auto-GPT and expert prompting, we can use dynamic control flow in the design to let the agent decide what expert we should use.",
-                   "name": "Dynamic Assignment of Roles",
-                   "code": """def forward(self, taskInfo):
+Role_Assignment = {
+    "thought": "Similar to Auto-GPT and expert prompting, we can use dynamic control flow in the design to let the agent decide what expert we should use.",
+    "name": "Dynamic Assignment of Roles",
+    "code": """def forward(self, taskInfo):
         # Instruction for step-by-step reasoning
         cot_instruction = "Please think step by step and then solve the task."
         expert_agents = [LLMAgentBase(['thinking', 'answer'], 'Expert Agent', role=role) for role in ['Clinical Medicine Expert', 'Medical Research Specialist', 'Pathophysiology Expert', 'Public Health and Epidemiology Specialist']]
@@ -220,10 +224,12 @@ Role_Assignment = {"thought": "Similar to Auto-GPT and expert prompting, we can 
 
         thinking, answer = expert_agents[expert_id]([taskInfo], cot_instruction)
         return answer
-"""
-                   }
+""",
+}
 
-system_prompt = """You are a helpful assistant. Make sure to return in a WELL-FORMED JSON object."""
+system_prompt = (
+    """You are a helpful assistant. Make sure to return in a WELL-FORMED JSON object."""
+)
 
 base = """# Overview
 You are an expert machine learning researcher testing various agentic systems. Your objective is to design building blocks such as prompts and control flows within these systems to solve complex tasks. Your aim is to design an optimal agent performing well on the MedAgentsBench (Medical Agents Benchmark) is a challenging evaluation that measures a model’s capacity to solve complex clinical questions, spanning differential diagnosis, treatment planning, and biomedical knowledge retrieval, drawn from seven rigorously curated medical datasets and covering a wide spectrum of specialties and reasoning depths.
@@ -418,6 +424,9 @@ class AgentArchitecture:
 # Discovered architecture archive
 Here is the archive of the discovered architectures:
 
+Here is a tool of medical RAG, 
+
+
 [ARCHIVE]
 
 The fitness value is the median and 95% Bootstrap Confidence Interval of the correct rate on a validation question set. Your GOAL is to maximize the "fitness".
@@ -544,6 +553,12 @@ def get_prompt(current_archive, adaptive=False):
 
 
 def get_reflexion_prompt(prev_example):
-    prev_example_str = "Here is the previous agent you tried:\n" + json.dumps(prev_example) + "\n\n"
-    r1 = Reflexion_prompt_1.replace("[EXAMPLE]", prev_example_str) if prev_example else Reflexion_prompt_1.replace("[EXAMPLE]", "")
+    prev_example_str = (
+        "Here is the previous agent you tried:\n" + json.dumps(prev_example) + "\n\n"
+    )
+    r1 = (
+        Reflexion_prompt_1.replace("[EXAMPLE]", prev_example_str)
+        if prev_example
+        else Reflexion_prompt_1.replace("[EXAMPLE]", "")
+    )
     return r1, Reflexion_prompt_2

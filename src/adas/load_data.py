@@ -43,6 +43,9 @@ def load_samples(args, mode: str):
     # load the dataset
     dataset = load_dataset(dataset_path, dataset_name)[split]
     print(f"Loaded {len(dataset)} samples from the dataset.")
+    valid_size = min(valid_size, len(dataset))
+    test_size = min(test_size, len(dataset))
+    print(f"Valid Size: {valid_size}, Test Size: {test_size}")
 
     # Select a subset of the dataset based on the mode
     if mode == "search":
