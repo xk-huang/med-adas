@@ -19,7 +19,7 @@ Set up `.env` for environment variables
 
 touch `.env`, and add those vars:
 
-Replace `?????` with your 
+Replace `?????` with yours.
 
 ```
 HF_HOME=cache/
@@ -44,11 +44,12 @@ By default, we use `MedQA` subset.
 
 
 
-## Code 
+## Experiment
+
 To run the code:
 You need to `AZURE_META_AGENT_MODEL` and `AZURE_AGENT_MODEL` to your deployed model names:
 - AZURE_META_AGENT_MODEL: is used for the meta agent, which writes/refines agents with codes.
-- AZURE_AGENT_MODEL: is used by the written code agents, the agents that evolved by meta agent.
+- AZURE_AGENT_MODEL: is used by the written code agents, the agents that evolved by meta agent. Use 4o-mini to save cost.
 
 ```bash
 # To debug both api and agent output
@@ -89,6 +90,8 @@ AZURE_META_AGENT_MODEL="gpt-4o-1120-nofilter-global" \
 AZURE_AGENT_MODEL="gpt-4o-1120-nofilter-global" \
 python src/adas/search.py
 ```
+
+To run the full experiments, see `scripts/experiments/run.sh`.
 
 ## Misc
 
